@@ -157,7 +157,77 @@ table += [ "First", "Second" ];
 // | 3  | First       | null         | null        | null     |
 // | 4  | First       | Second       | null        | null     |
 
-table[0] = null; // Remove the whole row with id = 0
+table[0] = null; // Remove the whole row with id = 0 and move other rows up
+// Table:
+// | Id | ColName1    | ColName2     | ColName3    | ColName4 |
+// ------------------------------------------------------------
+// | 0  | First       | Third        | null        | null     |
+// | 1  | First       | null         | null        | Fourth   |
+// | 2  | First       | null         | null        | null     |
+// | 3  | First       | Second       | null        | null     |
+
+// Add range:
+table += 
+[ 
+    [ "First1", "Second1", "Third1", "Fourth1" ],
+    [ "First2", "Second2", "Third2", "Fourth2" ],
+    [ "First3", "Second3", "Third3", "Fourth3" ],
+    [ "First4", "Second4", "Third4", "Fourth4" ],
+];
+// Table:
+// | Id | ColName1    | ColName2     | ColName3    | ColName4 |
+// ------------------------------------------------------------
+// | 0  | First       | Third        | null        | null     |
+// | 1  | First       | null         | null        | Fourth   |
+// | 2  | First       | null         | null        | null     |
+// | 3  | First       | Second       | null        | null     |
+// | 4  | First1      | Second1      | Third1      | Fourth1  |
+// | 5  | First2      | Second2      | Third2      | Fourth2  |
+// | 6  | First3      | Second3      | Third3      | Fourth3  |
+// | 7  | First4      | Second4      | Third4      | Fourth4  |
+
+```
+
+### Advanced table usage: selections, joins
+
+```rust
+let usersTable: [string, string, DateTime, string, string] = [ "FirstName", "LastName", "Birthday", "Login", "PasswordHash" ];
+let tradesTable: [i32, f128, f128 | null, DateTime, f64 ] = [ "UserId", "OpenPrice", "ClosePrice", "OpenDate", "Volume" ];
+
+fn AddNewUser(firstName: string, lastName: string, birthday: DateTime, login: string, password: string) 
+{
+    let pwdHasd = Md5.Encode(password);
+
+    usersTable += [ firstName, lastName, birthday, login, pwdHash ];
+}
+
+fn OpenTrade(userId: i32, openPrice: f128, volume: f64) 
+{
+    let currentTime = DateTime.UtcNow();
+
+    tradesTable += [ userId, openPrice, null, currentTime, volume ];
+}
+
+fn CloseTrade(tradeId: i32, currentPrice: f128)
+{
+    tradesTable.Find((trade) => trade["Id"] == tradeId).ClosePrice = currentPrice;
+}
+
+// Seed data
+AddNewUser("Anton", "Smith", DateTime.FromString("1982-05-19"), "executor_221", "masterkey");
+AddNewUser("Andrey", "Rock", DateTime.FromString("1991-04-11"), "everlasting_summer", "asdf456");
+AddNewUser("Misha", "Shisha", DateTime.FromString("1989-09-04"), "pro_trader_plus", "1234567");
+AddNewUser("Vasya", "Pupkin", DateTime.FromString("1986-01-10"), "vpupkin_", "091283asd!");
+
+OpenTrade(usersTable.FindByColumn("FirstName", "Anton").First()["Id"], 1.2345m, 100_000);
+OpenTrade(usersTable[3]["Id"], 1.3345m, 100_100);
+OpenTrade(1, 1.6345m, 1_500_000);
+
+CloseTrade(0, 1.1101);
+
+let closedTrades = tradesTable.SelectAll((trade) => trade.ClosePrice != null);
+
+let openPrices = tradesTable.SelectColumn("OpenPrice");
 ```
 
 ### Lists
@@ -169,6 +239,78 @@ numList.AddRange({ 12, 10, 5, 2 });
 ```
 
 ### Functions
+
+Any function that is **not** inside a class is global for *the current scope*. Max scope possible (without any changes) is a file. Local scopes are function in other functions. In fact, every function is a named (non-anonymous) lambda expression.
+
+Some examples below:
+
+```rust
+fn DoSomething(): void // return nothing
+{
+    Console.WriteLine("We're doing something!");
+}
+
+fn CaclAdd(a: i32, b: i32): i32
+{
+    return a + b;
+}
+
+fn Square(a: i32): i32 
+{
+    return a * a;
+}
+
+fn FuncInsideAnotherFunc(testStr: string) // if you don't specify the return type, it stays as 'void'
+{
+    fn TestInsideFunc(testStr2: string) 
+    {
+        Console.WriteLine($"You just wrote: {testStr2} while testStr is {testStr}"); // String interpolation
+    }
+
+    TestInsideFund("Hello, World!");
+}
+
+// TestInsideFunc("test"); // Compilation error: 'TestInsideFunc' is not defined
+```
+
+You can create pointers to any function and methods. In loonge they are named delegates, like C#:
+
+```rust
+pub delegate AddDelegate(a: i32, b: i32): i32;
+```
+
+Delegates cannot have body. Delegates descibe signature of any function that can fit in. With the previous example, the allowed signature will be: `<fn_name>(<param1>: i32, <param2>: i32): i32`. Example:
+
+```rust
+pub delegate AddDelegate(a: i32, b: i32): i32;
+
+fn Add(a: i32, b: i32): i32 
+{
+    return a + b;
+}
+
+let myDelegate: AddDelegate = Add;
+// Now you can call 'myDelegate' as function:
+let result = myDelegate(15, 20);
+Console.WriteLine($"Result of 'myDelegate' is: " + result);
+// OUTPUT:
+// > Result of 'myDelegate' is: 35
+```
+
+Delegates accept access modifiers as they can be found **outside** of the current file.
+
+### Access modifiers
+
+Please note, that functions can have an access modifier, but the max visibility of a function will always (for a few exceptions) be current file (`pub` modifier), see [Modules](Modules) chapter.
+
+These access modifiers are allowed:
+
+| Keyword | Allowed scope(s) |
+| --- | --- |
+| `pub` | Entire project and all other projects |
+| `protected` | Childs of a class |
+| `internal` | Current project |
+| `private` | Current scope |
 
 ### Modules 
 
