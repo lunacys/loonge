@@ -32,6 +32,30 @@
 | `string` | Depending on string length, size is not limited | Immutable string (UTF-16) | |
 | `object` | Depending on object members | Any instance of any type | |
 
+Any type with square braces is array:
+
+```rust
+i32[] // array of 32-bit integers
+```
+
+Square braces AND types within them is table:
+
+```rust
+[i32, i64, f128] // table with 3 columns
+```
+
+Types delimited with comma within parentheses is tuple:
+
+```rust
+(i32, string, object) // tuple with 3 elements
+```
+
+Braces are for anonymous (typeless) objects (which can be useful for JSON for example):
+
+```rust
+{ a: i32, b: i64, c: i16 }
+```
+
 ### Variables
 
 ```rust
@@ -48,7 +72,9 @@ let myChar = '\n'; // char
 
 let myBool = true; // bool
 
-let myArray: i32[] = { 1, 2, 3, 4, 5 }; // immutable array of size 5
+let myArray: i32[] = [ 1, 2, 3, 4, 5 ]; // immutable array of size 5
+
+let myTwoDimensionalArray: i32[,] = 
 
 const myConst = 3.14; // immutable object of type f64
 
@@ -299,6 +325,77 @@ Console.WriteLine($"Result of 'myDelegate' is: " + result);
 
 Delegates accept access modifiers as they can be found **outside** of the current file.
 
+### Anonymous (typeless) objects
+
+```rust
+let jsonSchema: {i32, bool, bool, i32} = 
+{
+    name: "Test",
+    isMarried: true,
+    extended: true,
+    errorCode: 200
+};
+
+jsonSchema = Json.Parse("{\"name\": \"hellothere\", \"isMarried\": true, \"extended\": false, \"errorCode\": 404 }");
+
+// Extended usage:
+let jsonSchemaExtended: {i32, {i32, string}, string[]} = 
+{
+    requestId: 1542001,
+    response: {
+        errorCode: 404,
+        message: "Not Found"
+    },
+    data: [
+        "hello",
+        "there",
+        "i think",
+        "you're wrong",
+        "try something better"
+    ]
+};
+```
+
+OR
+
+```rust
+ // Objects
+let Math = 
+{ 
+    // Single-line function
+    export fn Abs(num: i32): i32 => { return (num < 0) ? -num : num; }; // ?: operator
+
+    // Braces are optional
+    export fn Sqr(num: i32): i32 => num * num;
+
+    // Default style functions
+    export fn Min(nums: i32[]): i32
+    {
+        let min = nums[0]; // the first element
+        for let i = 1..nums.length 
+        {
+            if nums[i] < min 
+                min = nums[i];
+        }
+        return min;
+    }
+}
+// Type is: { (i32) => i32, (i32) => i32, (i32[]) => i32 }
+
+Console.WriteLine($"Abs(1): {Math.Abs(1)}");
+// OUTPUT:
+// > 1
+
+Console.WriteLine($"Abs(-1): {Math.Abs(-1)}");
+// OUTPUT:
+// > 1
+
+let arrayOfInts: i32[] = { 12, 8, 16, 21, 1, -8, 2 };
+Console.WriteLine($"Min(arrayOfInts): {Math.Min(arrayOfInts)}");
+// OUTPUT:
+// > -8
+```
+
 ### Access modifiers
 
 Please note, that functions can have an access modifier, but the max visibility of a function will always (for a few exceptions) be current file (`pub` modifier), see [Modules](Modules) chapter.
@@ -312,8 +409,99 @@ These access modifiers are allowed:
 | `internal` | Current project |
 | `private` | Current scope |
 
-### Modules 
+### Modules and exports
+
+Modules helps you to logically split your code.
+
+In fact, a module is a namespace provider (similiarly to `namepsace` in C# or `package` in Java). 
+
+In a single file there can be any amount of modules.
+
+```rust
+module MyModule
+{
+    fn Add(a: i32, b: i32): i32 => a + b;
+    fn Sub(a: i32, b: i32): i32 => a - b;
+    fn Mul(a: i32, b: i32): i32 => a * b;
+    fn Div(a: i32, b: i32): f32 => a / b;
+}
+
+fn Calc(): void 
+{
+    Console.WriteLine($"5 + 5 = {MyModule.Add(5, 5)}");
+    Console.WriteLine($"5 - 5 = {MyModule.Sub(5, 5)}");
+    Console.WriteLine($"5 * 5 = {MyModule.Mul(5, 5)}");
+    Console.WriteLine($"5 / 5 = {MyModule.Div(5, 5)}");
+}
+
+Calc();
+
+// OUTPUT: 
+// > 5 + 5 = 10
+// > 5 - 5 = 0
+// > 5 * 5 = 25
+// > 5 / 5 = 1
+```
+
+Exports provide any function or module to be visible externally.
+
+```rust
+// Math.lun
+export module Math
+{
+    fn Add(a: i32, b: i32): i32 => a + b;
+    fn Sub(a: i32, b: i32): i32 => a - b;
+    fn Mul(a: i32, b: i32): i32 => a * b;
+    fn Div(a: i32, b: i32): f32 => a / b;
+}
+
+export fn Calc(): void 
+{
+    Console.WriteLine($"5 + 5 = {MyModule.Add(5, 5)}");
+    Console.WriteLine($"5 - 5 = {MyModule.Sub(5, 5)}");
+    Console.WriteLine($"5 * 5 = {MyModule.Mul(5, 5)}");
+    Console.WriteLine($"5 / 5 = {MyModule.Div(5, 5)}");
+} 
+
+// Create an alias to module
+export Math as M;
+
+// or you can export module later:
+// export Math;
+// export Calc;
+
+// Main.lun
+use Math, M from "./Math";
+use Console from System;
+
+Console.WriteLine("11 + 15 = " + Math.Add(11, 15));
+Console.WriteLine("1 - 2 = " + M.Sub(1 - 2));
+
+Calc();
+// OUTPUT: 
+// > 11 + 15 = 26
+// > 1 - 2 = -1
+// > 5 + 5 = 10
+// > 5 - 5 = 0
+// > 5 * 5 = 25
+// > 5 / 5 = 1
+```
+
+### Module extensions and implementations
+
+### Conditional statements
+
+`if condition doSomething(); else doSomethingElse();`
+
+`if condition1 || condition2 { doSomething1(); doSomething2(); }`
+
+### Matches
+
+### Enums
 
 ### Classes
 
-### Methods
+### Interfaces
+
+### Generics
+
