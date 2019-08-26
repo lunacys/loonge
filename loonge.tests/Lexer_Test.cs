@@ -21,9 +21,18 @@ namespace loonge.tests
         }
 
         [Test]
-        public void Test1()
+        public void General()
         {
-            Assert.Pass();
+	        Assert.Pass("Success");
+        }
+
+		[Test]
+        public void TestForExceptions()
+        {
+	        Assert.DoesNotThrow(() => _lexer.Peek(), "Peek() method must not throw an exception");
+	        Assert.DoesNotThrow(() => _lexer.Read(), "Read() method must not throw an exception");
+	        Assert.Throws<InvalidTokenException>(() => _lexer.ThrowException(new InvalidTokenException(1, 0)),
+		        "ThrowException() method must throw exception of type InvalidTokenException");
         }
 
 		[TearDown]
