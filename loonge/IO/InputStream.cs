@@ -55,7 +55,7 @@ namespace loonge.IO
 		/// <returns>Character</returns>
 		public char Read()
 		{
-			if (IsEndOfStream) return '\0';
+			if (IsEndOfStream) throw new EndOfStreamException();
 
 			var ch = (char)_reader.Read();
 

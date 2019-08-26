@@ -1,4 +1,5 @@
-﻿using loonge.IO;
+﻿using System.IO;
+using loonge.IO;
 using NUnit.Framework;
 
 namespace loonge.tests
@@ -16,6 +17,7 @@ namespace loonge.tests
 		[TestCase("InputStream_Test1.txt")]
 		public void Common(string filename)
 		{
+			// TODO: Make tests better: test more cases
 			using (InputStream input = new InputStream(filename))
 			{
 				Assert.That(input.Column == 0 && input.Line == 1);
@@ -49,6 +51,8 @@ namespace loonge.tests
 
 					Assert.That(char.IsDigit(ch) || ch == '\r' || ch == '\n', $"Error: got an invalid char: {ch}");
 				}
+
+				Assert.Throws<EndOfStreamException>(() => input.Read());
 			}
         }
 	}
