@@ -122,8 +122,15 @@ namespace loonge.tests
         private void CheckString(string expected)
         {
 	        if (expected != null)
+	        {
 		        Assert.DoesNotThrow(T);
+	        }
+
             Assert.That(_token.Type == TokenType.String, $"Expected String (Token Value: {_token.Value})");
+
+            if (expected == null)
+	            return;
+
             Assert.DoesNotThrow(() =>
 			{
 				var test = (string)_token.Value;
