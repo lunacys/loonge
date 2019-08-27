@@ -33,18 +33,8 @@ namespace loonge.tests
 	        foreach (var typeAlias in _availableTypeAliases)
 		        NextAndCheckTypeAlias(typeAlias);
 
-			CheckDelimiter('.');
-			CheckDelimiter(',');
-			CheckDelimiter('[');
-			CheckDelimiter(']');
-			CheckDelimiter('(');
-			CheckDelimiter(')');
-			CheckDelimiter('{');
-			CheckDelimiter('}');
-			CheckDelimiter(';');
-
+			CheckDelimiters('.', ',', '[', ']', '(', ')', '{', '}', ';');
 			CheckStrings("string1", "string1.1", "string2", "string2.1", "string2.2", "string3", null, "  ");
-
 			CheckChars('a', ' ', '\n');
         }
 
@@ -110,6 +100,14 @@ namespace loonge.tests
 				var test = (char)_token.Value;
 			});
 			Assert.That((char)_token.Value == expected);
+        }
+
+        private void CheckDelimiters(params char[] expected)
+        {
+	        foreach (var delimiter in expected)
+	        {
+		        CheckDelimiter(delimiter);
+	        }
         }
 
 		/// <summary>
