@@ -32,6 +32,20 @@ namespace loonge.tests
 
 	        foreach (var typeAlias in _availableTypeAliases)
 		        NextAndCheckTypeAlias(typeAlias);
+
+			CheckDelimiter('.');
+			CheckDelimiter(',');
+			CheckDelimiter('[');
+			CheckDelimiter(']');
+			CheckDelimiter('(');
+			CheckDelimiter(')');
+			CheckDelimiter('{');
+			CheckDelimiter('}');
+			CheckDelimiter(';');
+
+			CheckStrings("string1", "string1.1", "string2", "string2.1", "string2.2", "string3", null, "  ");
+
+			CheckChars('a', ' ', '\n');
         }
 
 		[Test]
@@ -85,6 +99,60 @@ namespace loonge.tests
 	        Assert.That(_token.Type == TokenType.TypeAlias, $"Expected TypeAlias (Token Value: {_token.Value})");
 	        Assert.That(Enum.TryParse(_token.Value.ToString(), true, out ta), $"Expected type alias {typeAlias}, but got {ta}");
 	        Assert.That(ta == typeAlias);
+        }
+
+        private void CheckDelimiter(char expected)
+        {
+	        T();
+			Assert.That(_token.Type == TokenType.Delimiter, $"Expected Delimiter (Token Value: {_token.Value})");
+			Assert.DoesNotThrow(() =>
+			{
+				var test = (char)_token.Value;
+			});
+			Assert.That((char)_token.Value == expected);
+        }
+
+		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expected">Pass null if there must be an error/exception</param>
+        private void CheckString(string expected)
+        {
+	        if (expected != null)
+		        Assert.DoesNotThrow(T);
+            Assert.That(_token.Type == TokenType.String, $"Expected String (Token Value: {_token.Value})");
+            Assert.DoesNotThrow(() =>
+			{
+				var test = (string)_token.Value;
+			});
+			Assert.AreEqual(expected, (string)_token.Value);
+        }
+
+		private void CheckStrings(params string[] strs)
+		{
+			foreach (var str in strs)
+			{
+				CheckString(str);
+			}
+		}
+
+        private void CheckChar(char expected)
+		{
+			T();
+			Assert.That(_token.Type == TokenType.Character, $"Expected Character (Token Value: {_token.Value})");
+			Assert.DoesNotThrow(() =>
+			{
+				var test = (char)_token.Value;
+			});
+			Assert.AreEqual(expected, (char)_token.Value);
+		}
+
+        private void CheckChars(params char[] chrs)
+        {
+	        foreach (var chr in chrs)
+	        {
+		        CheckChar(chr);
+	        }
         }
     }
 }
