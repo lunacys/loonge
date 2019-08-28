@@ -1,0 +1,160 @@
+﻿// Single-line Comment
+
+/* Multi-line comment */
+
+/* ...::::::::::::::::::::...
+ * Another multi-line comment 
+ * ...::::::::::::::::::::...
+ */
+
+/// ...
+/// Documentation comment!
+/// ...
+
+// Keywords:
+fn   // function
+let
+if
+else
+type
+private 
+public   
+protected 
+internal
+const // constant variable
+true
+false
+use
+module
+export
+impl
+match
+loop
+for
+do
+while
+switch
+case
+break
+continue
+default
+static
+extern
+return
+enum
+struct
+intf
+is
+as
+typeof
+sizeof
+nameof
+new
+void
+null
+throw
+extend
+with
+from
+try
+catch
+this
+in
+ref
+out
+super
+where
+delegate
+event
+
+// Types:
+i8
+i16
+i32
+i64
+si8
+ui16
+ui32
+ui64
+f32
+f64
+f128
+string
+char
+bool
+object
+
+// Operators
+
+// Single symbol
++ // Plus
+- // Minus
+/ // Divide
+* // Multiply
+% // Modulo
+^ // Bit XOR
+| // Bit OR
+& // Bit AND
+~ // Bit NOT
+= // Assign
+? // Unary operator (first)
+: // Unary operator (second)
+> // Greater
+< // Less
+$ // String interpolation
+! // Logical NOT
+@ // String AS-IS
+_ // Empty
+
+// Multiple symbols
+:: // Module provider
+=> // Lambda
+-> // Next
+== // Equals
+!= // Not Equals
+>= // Greater or equals
+<= // Less or equals
++= // 
+-= // 
+*= //
+/= //
+%= // 
+^= // 
+|= //
+&= //
+>> // Bit shift right
+<< // Bit shift left
+&& // Logical AND
+|| // Logical OR
+++ // Increment
+-- // Decrement
+
+// Delimiters
+
+.,[](){};
+
+// Strings
+
+"string1""string1.1"
+"string2""string2.1""string2.2"
+"string3"
+"not closed string
+"  " // empty string
+
+// Chars
+
+'a' ' ' '\n'
+
+// Numbers
+0b0101
+0xFF
+12345
+010101
+1.2345678
+1.1.1.1.1
+.11
+
+// Variables/identifiers
+
+testVar1 test_var_2
+__testvar3
