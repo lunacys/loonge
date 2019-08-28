@@ -236,7 +236,7 @@ fn OpenTrade(userId: i32, openPrice: f128, volume: f64)
 
 fn CloseTrade(tradeId: i32, currentPrice: f128)
 {
-    tradesTable.Find((trade) => trade["Id"] == tradeId).ClosePrice = currentPrice;
+    tradesTable.Find((trade) => trade["Id"] == tradeId)["ClosePrice"] = currentPrice;
 }
 
 // Seed data
@@ -487,7 +487,32 @@ Calc();
 // > 5 / 5 = 1
 ```
 
-### Module extensions and implementations
+### Module extensions
+
+You can extend any module:
+
+```rust
+export module Math 
+{
+    fn Add(a: i32, b: i32): i32 => a + b;
+    fn Sub(a: i32, b: i32): i32 => a - b;
+    fn Mul(a: i32, b: i32): i32 => a * b;
+    fn Div(a: i32, b: i32): f32 => a / b;
+}
+
+extend Math fn Mod(a: i32, b: i32) 
+{
+    return a % b;
+} 
+
+// Now module Math has new function 'Mod'
+let testMod = Math.Mod(10 % 2);
+Console.WriteLine(testMod);
+// OUTPUT:
+// > 0
+// But the extension cannot be accessed externally, if you want that behavior, export it:
+export Math.Mod with Math; // Place Mod function inside Math module and export it
+```
 
 ### Conditional statements
 
@@ -499,7 +524,13 @@ Calc();
 
 ### Enums
 
+### Types
+
+### Type implementation
+
 ### Classes
+
+### Structures
 
 ### Interfaces
 
