@@ -1,0 +1,6 @@
+123123 // Integer
+123.123 // Double
+.123 // Double
+11.11.11 // Exception
+123123123 // Another int
+123123123123123123123123123123123123123 // Overflow

@@ -1,0 +1,10 @@
+"test string!!!"
+"" // Empty string
+"/n/r/n""test1""test2"
+"\r\n\t\'" // Check control characters + single quote
+"double \" here"
+"\"double quote\""
+"\n\t\r\'\"\\\0\a\b\v\f" // Other control chars
+"\h" // Check invalid control char
+"here must be an exception
+"

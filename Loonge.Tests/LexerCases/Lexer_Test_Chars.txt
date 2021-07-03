@@ -1,0 +1,4 @@
+'a' 'b' 'c' // Must be (1:3), (1:7) and (1:11)
+'d' 'e' 'f' // Must be (2:3), (2:7) and (2:11)
+'g''h'      // Must be (3:3), (3:6)
+'ex' // That's too much symbols for a char
