@@ -1,0 +1,12 @@
+// Testing full doc comment without closing with star-slash (*/)
+/*
+asd
+asd
+asd
+asd
+asd
+asd
+asd
+asd
+asd
+asd

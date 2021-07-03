@@ -25,7 +25,7 @@ namespace Loonge.Api.IO
 
 		private StringReader _reader;
 
-		public bool IsEndOfStream => Peek() == 0xFFFF; // EOF symbol
+		public bool IsEndOfStream => Peek() == 0xFFFF || Position == TotalSize; // EOF symbol
 
 		public StringReader ToStringReader()
 		{

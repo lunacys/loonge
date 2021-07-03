@@ -1,0 +1,25 @@
+/
+// ..:: single slash (/) character here is for determining  ::..
+//  ..::      if comment skipping is working normally        ::..
+//
+// Single line comment
+/*
+ *  Multi line comment
+ */
+ 
+/// Potentially docs
+///
+///
+//
+/
+//
+//#
+/
+//
+// Comment 1
+/
+// Comment 2
+//comment3 
+/ / /
+/ / // End Line Comment
+/ /* Middle-line comment *// / / /

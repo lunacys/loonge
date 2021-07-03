@@ -17,11 +17,70 @@ namespace Loonge.Tests
 	    private readonly string[] _availableKeywords = Enum.GetNames(typeof(Keyword));
 	    private readonly string[] _availableTypeAliases = Enum.GetNames(typeof(TypeAlias));
 
+	    public static readonly string CommentsTestFile = "LexerCases/Lexer_Test_Comments.txt";
+	    public static readonly string CommentsTestFile2 = "LexerCases/Lexer_Test_Comments2.txt";
+
         [SetUp]
         public void Setup()
         {
-			_inputStream = new InputStream("Lexer_Test1.txt");
+			_inputStream = new InputStream("LexerCases/Lexer_Test_Complete.txt");
 			_lexer = new Lexer(_inputStream);
+        }
+
+        [Test]
+        public void CommentsTest()
+        {
+	        using var input = new InputStream(CommentsTestFile);
+	        var lexer = new Lexer(input);
+
+	        var checkTokenAndLine = new Action<int, int>((line, column) =>
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(TokenType.Operator, tok.Type, "Token Type");
+		        Assert.AreEqual("/", (string) tok.Value, "Token Value");
+		        if (line != -1 && column != -1)
+		        {
+			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
+			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
+		        }
+	        });
+
+	        var checkEof = new Action(() =>
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(TokenType.Eof, tok.Type, "Token Type");
+	        });
+
+	        // NOTE: We're expecting the position to be incremented by 1 (skipping comments and whitespaces)
+	        // as the cursor's position moves after reading a char
+	        checkTokenAndLine(1, 1);
+	        checkTokenAndLine(14, 1);
+	        checkTokenAndLine(17, 1);
+	        checkTokenAndLine(20, 1);
+	        
+	        checkTokenAndLine(23, 1);
+	        checkTokenAndLine(23, 3);
+	        checkTokenAndLine(23, 5);
+	        checkTokenAndLine(24, 1);
+	        checkTokenAndLine(24, 3);
+	        checkTokenAndLine(25, 1);
+	        
+	        checkTokenAndLine(25, 28);
+	        checkTokenAndLine(25, 30);
+	        checkTokenAndLine(25, 32);
+	        checkTokenAndLine(25, 34);
+
+	        checkEof();
+        }
+
+        [Test]
+        public void CommentsTests2()
+        {
+	        using var input = new InputStream(CommentsTestFile2);
+	        var lexer = new Lexer(input);
+
+	        var tok = lexer.Read();
+	        Assert.AreEqual(tok.Type, TokenType.Eof);
         }
 
         [Test]
