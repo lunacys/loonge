@@ -1,4 +1,4 @@
-﻿namespace Loonge.Lexing
+﻿namespace Loonge.Api.Lexing
 {
 	public enum Keyword
 	{
@@ -49,12 +49,10 @@
 		Try,
 		Catch,
 		This,
-		In,
-		Ref,
-		Out,
-		Super,
+		Base,
 		Where,
-		Delegate,
-		Event
+		Event,
+		Await,
+		Async
 	}
 }

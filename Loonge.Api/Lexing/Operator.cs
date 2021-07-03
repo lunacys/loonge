@@ -1,4 +1,4 @@
-﻿namespace Loonge.Lexing
+﻿namespace Loonge.Api.Lexing
 {
 	public enum Operator
 	{
@@ -13,8 +13,8 @@
 		BitAnd,
 		BitNot,
 		Assign,
-		UnaryFirst,
-		UnarySecond,
+		TernaryFirst,
+		TernarySecond,
 		Greater,
 		Less,
 		StringInterpolation,

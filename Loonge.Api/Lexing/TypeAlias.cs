@@ -1,4 +1,4 @@
-﻿namespace Loonge.Lexing
+﻿namespace Loonge.Api.Lexing
 {
 	public enum TypeAlias
 	{

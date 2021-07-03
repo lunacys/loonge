@@ -2,7 +2,7 @@
 using Loonge.Api.IO;
 using Loonge.Api.Lexing;
 
-namespace Loonge.Lexing
+namespace Loonge.Api.Lexing
 {
 	public class Lexer : ILexer
 	{

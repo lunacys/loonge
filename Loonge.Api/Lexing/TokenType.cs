@@ -1,4 +1,4 @@
-﻿namespace Loonge.Lexing
+﻿namespace Loonge.Api.Lexing
 {
 	public enum TokenType
 	{
@@ -13,6 +13,10 @@
 		String = 4,
 		Character = 5,
 		Number = 6,
-		Identifier = 7,
+		DecimalNumber = 7,
+		/// <summary>
+		/// Usually name of a variable
+		/// </summary>
+		Identifier = 8,
 	}
 }
