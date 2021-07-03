@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace loonge.interpreter
+namespace Loonge.interpreter
 {
     class Program
     {

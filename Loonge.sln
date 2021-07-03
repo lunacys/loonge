@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loonge", "loonge\loonge.csproj", "{1EAC8EA6-4429-41A1-AF2F-66C86716D26F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loonge.Api", "Loonge.Api\Loonge.Api.csproj", "{1EAC8EA6-4429-41A1-AF2F-66C86716D26F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loonge.tests", "loonge.tests\loonge.tests.csproj", "{4F9AD7EE-9BC6-48E5-816B-2BFA783E8C31}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loonge.Tests", "Loonge.Tests\Loonge.Tests.csproj", "{4F9AD7EE-9BC6-48E5-816B-2BFA783E8C31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loonge.interpreter", "loonge.interpreter\loonge.interpreter.csproj", "{88B8595B-84A3-4627-AD5C-491663CF42E7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Loonge.Interpreter", "Loonge.Interpreter\Loonge.Interpreter.csproj", "{88B8595B-84A3-4627-AD5C-491663CF42E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

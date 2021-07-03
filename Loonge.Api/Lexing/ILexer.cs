@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace loonge.Lexing
+namespace Loonge.Lexing
 {
 	public interface ILexer
 	{

@@ -1,4 +1,4 @@
-﻿namespace loonge.Lexing
+﻿namespace Loonge.Lexing
 {
 	public enum Keyword
 	{

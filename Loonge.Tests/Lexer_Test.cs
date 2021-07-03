@@ -1,9 +1,9 @@
 using System;
-using loonge.IO;
-using loonge.Lexing;
+using Loonge.Api.IO;
+using Loonge.Lexing;
 using NUnit.Framework;
 
-namespace loonge.tests
+namespace Loonge.Tests
 {
     public class Lexer_Test
     {
