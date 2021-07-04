@@ -7,9 +7,7 @@
 		If,
 		Else,
 		Type,
-		Private,
-		Public,
-		Protected,
+		Pub,
 		Internal,
 		Const,
 		True,
@@ -58,6 +56,8 @@
 		Override,
 		Virtual,
 		Abstract,
-		In
+		In,
+		Mut,
+		Import
 	}
 }

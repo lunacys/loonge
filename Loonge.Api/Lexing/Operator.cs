@@ -13,8 +13,7 @@
 		BitAnd,
 		BitNot,
 		Assign,
-		TernaryFirst,
-		TernarySecond,
+		TypeAssign,
 		Greater,
 		Less,
 		StringInterpolation,
@@ -22,6 +21,7 @@
 		StringAsIs,
 		Empty,
 		MemberAccess,
+		Nullable,
 		// Multiply symbols
 		ModuleProvider,
 		Lambda,

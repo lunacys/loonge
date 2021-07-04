@@ -48,7 +48,6 @@ object
 $ // String interpolation
 ! // Logical NOT
 @ // String AS-IS
-_ // Empty
 
 // Multiple symbols
 :: // Module provider

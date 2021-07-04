@@ -1,5 +1,5 @@
 // Keywords
-fn let if else type private public protected
+fn let if else type
 
 // Types
 i32 i64 f32 f64

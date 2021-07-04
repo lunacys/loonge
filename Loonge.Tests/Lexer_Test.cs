@@ -28,6 +28,7 @@ namespace Loonge.Tests
 	    public static readonly string NumbersTestFile = "LexerCases/Lexer_Test_Numbers.txt";
 	    public static readonly string OperatorsTestFile = "LexerCases/Lexer_Test_Operators.txt";
 	    public static readonly string WordsTestFile = "LexerCases/Lexer_Test_Words.txt";
+	    public static readonly string Complete2TestFile = "LexerCases/Lexer_Test_Complete2.txt";
 
 	    private static void GenerateTestCase()
 	    {
@@ -205,14 +206,14 @@ namespace Loonge.Tests
 	        var checkInt = CreateTestAction<int>(lexer, TokenType.Number);
 	        var checkDouble = CreateTestAction<double>(lexer, TokenType.DecimalNumber);
 
-	        checkInt(123123, 1, 7);
-	        checkDouble(123.123, 2, 8);
-	        checkDouble(.123, 3, 5);
+	        checkInt(123123, 1, 6);
+	        checkDouble(123.123, 2, 7);
+	        checkDouble(.123, 3, 4);
 
 	        Assert.Throws<SyntaxException>(() => lexer.Read());
 
-	        checkInt(11, 4, 9); // Special for current test
-	        checkInt(123123123, 5, 10);
+	        checkInt(11, 4, 8); // Special for current test
+	        checkInt(123123123, 5, 9);
 	        
 	        Assert.Throws<OverflowException>(() => lexer.Read());
         }
@@ -256,9 +257,6 @@ namespace Loonge.Tests
 	        checkKeyword(Keyword.If, -1, -1);
 	        checkKeyword(Keyword.Else, -1, -1);
 	        checkKeyword(Keyword.Type, -1, -1);
-	        checkKeyword(Keyword.Private, -1, -1);
-	        checkKeyword(Keyword.Public, -1, -1);
-	        checkKeyword(Keyword.Protected, -1, -1);
 
 	        checkType(TypeAlias.I32, -1, -1);
 	        checkType(TypeAlias.I64, -1, -1);
@@ -274,6 +272,135 @@ namespace Loonge.Tests
         }
 
         [Test]
+        public void Complete2Test()
+        {
+	        using var input = new InputStream(Complete2TestFile);
+	        var lexer = new Lexer(input);
+
+	        var checkKeyword = CreateTestActionNoLineCheck<Keyword>(lexer, TokenType.Keyword);
+	        var checkIdent = CreateTestActionNoLineCheck<string>(lexer, TokenType.Identifier);
+	        var checkOp = CreateTestActionNoLineCheck<Operator>(lexer, TokenType.Operator);
+	        var checkPunc = CreateTestActionNoLineCheck<char>(lexer, TokenType.Punctuation);
+	        var checkType = CreateTestActionNoLineCheck<TypeAlias>(lexer, TokenType.TypeAlias);
+	        var checkNum = CreateTestActionNoLineCheck<int>(lexer, TokenType.Number);
+	        var checkNumD = CreateTestActionNoLineCheck<double>(lexer, TokenType.DecimalNumber);
+	        
+	        // let std = import std;
+	        checkKeyword(Keyword.Let);
+	        checkIdent("std");
+	        checkOp(Operator.Assign);
+	        checkKeyword(Keyword.Import);
+	        checkIdent("std");
+	        checkPunc(';');
+	        
+	        // let dbg = import std.debug;
+	        checkKeyword(Keyword.Let);
+	        checkIdent("dbg");
+	        checkOp(Operator.Assign);
+	        checkKeyword(Keyword.Import);
+	        checkIdent("std");
+	        checkOp(Operator.MemberAccess);
+	        checkIdent("debug");
+	        checkPunc(';');
+
+	        // export module lexerTest {
+	        checkKeyword(Keyword.Export);
+	        checkKeyword(Keyword.Module);
+	        checkIdent("lexerTest");
+	        checkPunc('{');
+	        
+	        // pub struct point {
+	        checkKeyword(Keyword.Pub);
+	        checkKeyword(Keyword.Struct);
+	        checkIdent("point");
+	        checkPunc('{');
+	        
+	        // pub mut x: i32;
+	        checkKeyword(Keyword.Pub);
+	        checkKeyword(Keyword.Mut);
+	        checkIdent("x");
+	        checkOp(Operator.TypeAssign);
+	        checkType(TypeAlias.I32);
+	        checkPunc(';');
+	        
+	        // pub mut y: i32;
+	        checkKeyword(Keyword.Pub);
+	        checkKeyword(Keyword.Mut);
+	        checkIdent("y");
+	        checkOp(Operator.TypeAssign);
+	        checkType(TypeAlias.I32);
+	        checkPunc(';');
+	        
+	        // } 
+	        checkPunc('}');
+	        
+	        // } 
+	        checkPunc('}');
+	        
+	        // let mut x = 15;
+	        checkKeyword(Keyword.Let);
+	        checkKeyword(Keyword.Mut);
+	        checkIdent("x");
+	        checkOp(Operator.Assign);
+	        checkNum(15);
+	        checkPunc(';');
+	        
+	        // let mut y = 10;
+	        checkKeyword(Keyword.Let);
+	        checkKeyword(Keyword.Mut);
+	        checkIdent("y");
+	        checkOp(Operator.Assign);
+	        checkNum(10);
+	        checkPunc(';');
+	        
+	        // x += 5;
+	        checkIdent("x");
+	        checkOp(Operator.PlusAssign);
+	        checkNum(5);
+	        checkPunc(';');
+
+	        // y += 10;
+	        checkIdent("y");
+	        checkOp(Operator.PlusAssign);
+	        checkNum(10);
+	        checkPunc(';');
+	        
+	        // let xD = 15.1;
+	        checkKeyword(Keyword.Let);
+	        checkIdent("xD");
+	        checkOp(Operator.Assign);
+	        checkNumD(15.1);
+	        checkPunc(';');
+	        
+	        // let yD = 15.51;
+	        checkKeyword(Keyword.Let);
+	        checkIdent("yD");
+	        checkOp(Operator.Assign);
+	        checkNumD(15.51);
+	        checkPunc(';');
+	        
+	        // let a = .15;
+	        checkKeyword(Keyword.Let);
+	        checkIdent("a");
+	        checkOp(Operator.Assign);
+	        checkNumD(.15);
+	        checkPunc(';');
+	        
+	        // dbg.assert.areEqual(x, y);
+	        checkIdent("dbg");
+	        checkOp(Operator.MemberAccess);
+	        checkIdent("assert");
+	        checkOp(Operator.MemberAccess);
+	        checkIdent("areEqual");
+	        checkPunc('(');
+	        checkIdent("x");
+	        checkPunc(',');
+	        checkIdent("y");
+	        checkPunc(')');
+	        checkPunc(';');
+        }
+
+        [Test]
         public void General()
         {
 	        //Assert.Pass();
@@ -284,8 +411,19 @@ namespace Loonge.Tests
 	        foreach (var typeAlias in _availableTypeAliases)
 		        NextAndCheckTypeAlias(typeAlias);
 
+
+	        CheckOperators(
+		        "+", "-", "/", "*", "%", "^", "|", "&", "~", "=", "?", ":", ">", "<", "$", "!", "@",
+		        "::", "=>", "->", "==", "!=", ">=", "<=", "+=", "-=", "*=", "/=", "%=", "^=", "|=", "&=", ">>", "<<",
+		        "&&", "||", "++", "--"
+	        );
 	        CheckDelimiters(',', '[', ']', '(', ')', '{', '}', ';');
-			CheckStrings("string1", "string1.1", "string2", "string2.1", "string2.2", "string3", null, "  ");
+			CheckStrings(
+				"string1", "string1.1", 
+				"string2", "string2.1", "string2.2", 
+				"string3", 
+				"not closed string", 
+				"   ");
 			CheckChars('a', ' ', '\n');
         }
 
@@ -309,7 +447,7 @@ namespace Loonge.Tests
 			_inputStream.Dispose();
         }
 
-        private Action<T, int, int> CreateTestAction<T>(Lexer lexer, TokenType expectedTokenType)
+        private static Action<T, int, int> CreateTestAction<T>(Lexer lexer, TokenType expectedTokenType)
         {
 	        return (p1, line, column) =>
 	        {
@@ -321,6 +459,20 @@ namespace Loonge.Tests
 			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
 			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
 		        }
+	        };
+        }
+        
+        private static Action<T> CreateTestActionNoLineCheck<T>(Lexer lexer, TokenType expectedTokenType)
+        {
+	        return (p1) =>
+	        {
+		        Token tok = null;
+		        Assert.DoesNotThrow(() =>
+		        {
+			        tok = lexer.Read();
+		        }, $"({lexer.Line}:{lexer.Column})");
+		        Assert.AreEqual(expectedTokenType, tok.Type, $"Token Type (value exp: {p1}, got: {tok.Value})");
+		        Assert.AreEqual(p1, (T) tok.Value, "Token Value");
 	        };
         }
 
@@ -360,6 +512,16 @@ namespace Loonge.Tests
 	        Assert.That(_token.Type == TokenType.TypeAlias, $"Expected TypeAlias (Token Value: {_token.Value})");
 	        Assert.That(Enum.TryParse(_token.Value.ToString(), true, out ta), $"Expected type alias {typeAlias}, but got {ta}");
 	        Assert.That(ta == typeAlias);
+        }
+
+        private void CheckOperators(params string[] ops)
+        {
+	        foreach (var op in ops)
+	        {
+		        T();
+		        Assert.AreEqual(TokenType.Operator, _token.Type, $"({_lexer.Line}:{_lexer.Column})");
+		        Assert.AreEqual(Lexer.Operators[op], (Operator)_token.Value, $"({_lexer.Line}:{_lexer.Column})");
+	        }
         }
 
         private void CheckDelimiter(char expected)

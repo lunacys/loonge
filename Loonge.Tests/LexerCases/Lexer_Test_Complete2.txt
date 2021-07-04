@@ -1,0 +1,38 @@
+let std = import std;
+let dbg = import std.debug;
+
+/* Adding a module that contains type declaration of point */
+export module lexerTest {
+    pub struct point {
+        pub mut x: i32;
+        pub mut y: i32;
+    }
+}
+
+let mut x = 15;
+let mut y = 10;
+
+x += 5;
+y += 10;
+
+let xD = 15.1;
+let yD = 15.51;
+let a = .15;
+
+dbg.assert.areEqual(x, y);
+
+let list = new std.list<string>();
+list.add("hello, world");
+
+let p = new lexerTest.point{ x = 32, y = 64 };
+let anonType = { x: i32, y: i32 };
+
+let myArray: i32[] = [ 1, 2, 3, 4, 5 ];
+
+let squareFunc = (num: i32) => num * num;
+let max = (n1: i32, n2: i32) => n1 > n2 ? n1 : n2;
+
+std.println($"Max of 2 and 3 is: {max(2, 3)}");
+
+let usersTable: [string username, string passwordHash];
+usersTable.add([ "Test", "abcdefg" ]);

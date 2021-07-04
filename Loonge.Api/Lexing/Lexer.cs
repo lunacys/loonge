@@ -35,8 +35,8 @@ namespace Loonge.Api.Lexing
 			{ "&", Operator.BitAnd },
 			{ "~", Operator.BitNot },
 			{ "=", Operator.Assign },
-			{ "?", Operator.TernaryFirst },
-			{ ":", Operator.TernarySecond },
+			{ ":", Operator.TypeAssign },
+			{ "?", Operator.Nullable},
 			{ ">", Operator.Greater },
 			{ "<", Operator.Less },
 			{ ".", Operator.MemberAccess },
@@ -194,24 +194,43 @@ namespace Loonge.Api.Lexing
 		{
 			if (_lastChar == '.') // That's a decimal number with omitted 0
 			{
-				var numStr = ".";
+				var numStr = "0";
 				
-				do
+				while (true)
 				{
-					_lastChar = _input.Read();
 					numStr += _lastChar;
-				} while (char.IsDigit(_lastChar));
 
-				return new Token(TokenType.DecimalNumber, double.Parse(numStr));
+					if (!char.IsDigit(_input.Peek()))
+						break;
+				
+					_lastChar = _input.Read();
+				}
+
+				double parsedD;
+
+				try
+				{
+					parsedD = double.Parse(numStr);
+				}
+				catch (FormatException e)
+				{
+					throw new SyntaxException($"Invalid number: '{numStr}'", Position, Line, Column);
+				}
+
+				return new Token(TokenType.DecimalNumber, parsedD);
 			}
 
 			bool pointFound = false;
-			var numStr2 = "" + _lastChar;
-			
-			do
+			var numStr2 = "";
+
+			while (true)
 			{
-				_lastChar = _input.Read();
 				numStr2 += _lastChar;
+
+				if (!char.IsDigit(_input.Peek()) && _input.Peek() != '.')
+					break;
+				
+				_lastChar = _input.Read();
 				if (_lastChar == '.')
 				{
 					if (!pointFound)
@@ -219,14 +238,37 @@ namespace Loonge.Api.Lexing
 					else
 						throw new SyntaxException("Multiple points in number", Position, Line, Column);
 				}
-					
-			} while (char.IsDigit(_lastChar) || _lastChar == '.');
+			}
 
 			// TODO: Add support for postfixes (f for float, m for decimal, etc)
 			if (pointFound)
-				return new Token(TokenType.DecimalNumber, double.Parse(numStr2));
+			{
+				double parsedD2;
 
-			return new Token(TokenType.Number, int.Parse(numStr2));
+				try
+				{
+					parsedD2 = double.Parse(numStr2);
+				}
+				catch (FormatException e)
+				{
+					throw new SyntaxException($"Invalid number: '{numStr2}'", Position, Line, Column);
+				}
+				
+				return new Token(TokenType.DecimalNumber, parsedD2);
+			}
+
+			int parsed;
+
+			try
+			{
+				parsed = int.Parse(numStr2);
+			}
+			catch (FormatException e)
+			{
+				throw new SyntaxException($"Invalid number: '{numStr2}'", Position, Line, Column);
+			}
+
+			return new Token(TokenType.Number, parsed);
 		}
 
 		private Token ReadString()
