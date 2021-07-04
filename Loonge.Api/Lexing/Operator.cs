@@ -21,6 +21,7 @@
 		LogicalNot,
 		StringAsIs,
 		Empty,
+		MemberAccess,
 		// Multiply symbols
 		ModuleProvider,
 		Lambda,
@@ -33,7 +34,7 @@
 		MinusAssign,
 		MultiplyAssign,
 		DivideAssign,
-		ModuleAssign,
+		ModuloAssign,
 		BitXorAssign,
 		BitOrAssign,
 		BitAndAssign,

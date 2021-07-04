@@ -53,6 +53,11 @@
 		Where,
 		Event,
 		Await,
-		Async
+		Async,
+		Test,
+		Override,
+		Virtual,
+		Abstract,
+		In
 	}
 }

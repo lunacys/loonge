@@ -1,0 +1,9 @@
+// Keywords
+fn let if else type private public protected
+
+// Types
+i32 i64 f32 f64
+
+// Identifiers
+test1 test12 test13.test14
+test15

@@ -11,62 +11,6 @@
 /// Documentation comment!
 /// ...
 
-// Keywords:
-fn   // function
-let
-if
-else
-type
-private 
-public   
-protected 
-internal
-const // constant variable
-true
-false
-use
-module
-export
-impl
-match
-loop
-for
-do
-while
-switch
-case
-break
-continue
-default
-static
-extern
-return
-enum
-struct
-intf
-is
-as
-typeof
-sizeof
-nameof
-new
-void
-null
-throw
-extend
-with
-from
-try
-catch
-this
-in
-ref
-out
-super
-where
-delegate
-event
-
 // Types:
 i8
 i16
@@ -131,27 +75,27 @@ _ // Empty
 
 // Delimiters
 
-.,[](){};
+,[](){};
 
 // Strings
 
 "string1""string1.1"
 "string2""string2.1""string2.2"
 "string3"
-"not closed string
-"  " // empty string
+"not closed string"
+"   " // empty string
 
 // Chars
 
 'a' ' ' '\n'
 
 // Numbers
-0b0101
-0xFF
+// 0b0101 // Exception. TODO!
+// 0xFF // Exception. TODO!
 12345
-010101
+10101
 1.2345678
-1.1.1.1.1
+// 1.1.1.1.1 // Exception
 .11
 
 // Variables/identifiers

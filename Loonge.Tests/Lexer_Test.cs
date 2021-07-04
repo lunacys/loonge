@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Loonge.Api.IO;
 using Loonge.Api.Lexing;
 using Newtonsoft.Json.Linq;
@@ -18,13 +19,52 @@ namespace Loonge.Tests
 	    private readonly string[] _availableKeywords = Enum.GetNames(typeof(Keyword));
 	    private readonly string[] _availableTypeAliases = Enum.GetNames(typeof(TypeAlias));
 
+	    public static readonly string GeneratedTestCaseFile = "GeneratedTestCase.txt";
+	    
 	    public static readonly string CommentsTestFile = "LexerCases/Lexer_Test_Comments.txt";
 	    public static readonly string CommentsTestFile2 = "LexerCases/Lexer_Test_Comments2.txt";
 	    public static readonly string CharsTestFile = "LexerCases/Lexer_Test_Chars.txt";
 	    public static readonly string StringsTestFile = "LexerCases/Lexer_Test_Strings.txt";
 	    public static readonly string NumbersTestFile = "LexerCases/Lexer_Test_Numbers.txt";
 	    public static readonly string OperatorsTestFile = "LexerCases/Lexer_Test_Operators.txt";
+	    public static readonly string WordsTestFile = "LexerCases/Lexer_Test_Words.txt";
 
+	    private static void GenerateTestCase()
+	    {
+		    using var sw = new StreamWriter(GeneratedTestCaseFile, false);
+
+		    sw.WriteLine("/* KEYWORDS */");
+		    foreach (var kw in Enum.GetNames<Keyword>())
+		    {
+			    sw.WriteLine(kw.ToLowerInvariant());
+		    }
+
+		    sw.WriteLine("/* TYPE ALIASES */");
+		    foreach (var ta in Enum.GetNames<TypeAlias>())
+		    {
+			    sw.WriteLine(ta.ToLowerInvariant());
+		    }
+
+		    sw.WriteLine("/* PUNCTUATION */");
+		    var punc = ",[](){};";
+		    foreach (var ch in punc)
+		    {
+			    sw.Write(ch);
+		    }
+		    sw.WriteLine();
+		    
+		    sw.WriteLine("/* OPERATORS */");
+		    foreach (var kv in Lexer.Operators)
+		    {
+			    sw.WriteLine(kv.Key);
+		    }
+	    }
+	    
+	    public Lexer_Test()
+	    {
+		    GenerateTestCase();
+	    }
+	    
         [SetUp]
         public void Setup()
         {
@@ -33,22 +73,49 @@ namespace Loonge.Tests
         }
 
         [Test]
+        public void GeneratedCasesTest()
+        {
+	        using var input = new InputStream(GeneratedTestCaseFile);
+	        var lexer = new Lexer(input);
+	        
+	        foreach (var kw in Enum.GetNames<Keyword>())
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(TokenType.Keyword, tok.Type);
+		        Assert.AreEqual(Enum.Parse<Keyword>(kw), tok.Value);
+	        }
+	        
+	        foreach (var ta in Enum.GetNames<TypeAlias>())
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(TokenType.TypeAlias, tok.Type);
+		        Assert.AreEqual(Enum.Parse<TypeAlias>(ta), tok.Value);
+	        }
+	        
+	        var punc = ",[](){};";
+	        foreach (var p in punc)
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(TokenType.Punctuation, tok.Type);
+		        Assert.AreEqual(p, tok.Value);
+	        }
+
+	        foreach (var kv in Lexer.Operators)
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(TokenType.Operator, tok.Type);
+		        Assert.AreEqual(kv.Value, tok.Value);
+	        }
+        }
+
+        [Test]
         public void CommentsTest()
         {
 	        using var input = new InputStream(CommentsTestFile);
 	        var lexer = new Lexer(input);
 
-	        var checkTokenAndLine = new Action<int, int>((line, column) =>
-	        {
-		        var tok = lexer.Read();
-		        Assert.AreEqual(TokenType.Operator, tok.Type, "Token Type");
-		        Assert.AreEqual(Operator.Divide, (Operator) tok.Value, "Token Value");
-		        if (line != -1 && column != -1)
-		        {
-			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-		        }
-	        });
+	        var checkTokenAndLine = CreateTestAction<Operator>(lexer, TokenType.Operator);
+	      
 
 	        var checkEof = new Action(() =>
 	        {
@@ -56,22 +123,22 @@ namespace Loonge.Tests
 		        Assert.AreEqual(TokenType.Eof, tok.Type, "Token Type");
 	        });
 
-	        checkTokenAndLine(1, 1);
-	        checkTokenAndLine(14, 1);
-	        checkTokenAndLine(17, 1);
-	        checkTokenAndLine(20, 1);
+	        checkTokenAndLine(Operator.Divide, 1, 1);
+	        checkTokenAndLine(Operator.Divide, 14, 1);
+	        checkTokenAndLine(Operator.Divide, 17, 1);
+	        checkTokenAndLine(Operator.Divide, 20, 1);
+	         
+	        checkTokenAndLine(Operator.Divide, 23, 1);
+	        checkTokenAndLine(Operator.Divide, 23, 3);
+	        checkTokenAndLine(Operator.Divide, 23, 5);
+	        checkTokenAndLine(Operator.Divide, 24, 1);
+	        checkTokenAndLine(Operator.Divide, 24, 3);
+	        checkTokenAndLine(Operator.Divide, 25, 1);
 	        
-	        checkTokenAndLine(23, 1);
-	        checkTokenAndLine(23, 3);
-	        checkTokenAndLine(23, 5);
-	        checkTokenAndLine(24, 1);
-	        checkTokenAndLine(24, 3);
-	        checkTokenAndLine(25, 1);
-	        
-	        checkTokenAndLine(25, 28);
-	        checkTokenAndLine(25, 30);
-	        checkTokenAndLine(25, 32);
-	        checkTokenAndLine(25, 34);
+	        checkTokenAndLine(Operator.Divide, 25, 28);
+	        checkTokenAndLine(Operator.Divide, 25, 30);
+	        checkTokenAndLine(Operator.Divide, 25, 32);
+	        checkTokenAndLine(Operator.Divide, 25, 34);
 
 	        checkEof();
         }
@@ -92,17 +159,7 @@ namespace Loonge.Tests
 	        using var input = new InputStream(CharsTestFile);
 	        var lexer = new Lexer(input);
 
-	        var checkChar = new Action<char, int, int>((ch, line, column) =>
-	        {
-		        var tok = lexer.Read();
-		        Assert.AreEqual(TokenType.Character, tok.Type, "Token Type");
-		        Assert.AreEqual(ch, (char) tok.Value, "Token Value");
-		        if (line != -1 && column != -1)
-		        {
-			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-		        }
-	        });
+	        var checkChar = CreateTestAction<char>(lexer, TokenType.Character);
 
 	        checkChar('a', 1, 3);
 	        checkChar('b', 1, 7);
@@ -112,6 +169,8 @@ namespace Loonge.Tests
 	        checkChar('f', 2, 11);
 	        checkChar('g', 3, 3);
 	        checkChar('h', 3, 6);
+	        checkChar('\n', 4, 4);
+	        checkChar('\r', 4, 8);
 
 	        Assert.Throws<SyntaxException>(() => lexer.Read());
         }
@@ -122,17 +181,7 @@ namespace Loonge.Tests
 	        using var input = new InputStream(StringsTestFile);
 	        var lexer = new Lexer(input);
 
-	        var checkString = new Action<string, int, int>((str, line, column) =>
-	        {
-		        var tok = lexer.Read();
-		        Assert.AreEqual(TokenType.String, tok.Type, "Token Type");
-		        Assert.AreEqual(str, (string) tok.Value, "Token Value");
-		        if (line != -1 && column != -1)
-		        {
-			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-		        }
-	        });
+	        var checkString = CreateTestAction<string>(lexer, TokenType.String);
 
 	        checkString("test string!!!", 1, 16);
 	        checkString("", 2, 2);
@@ -145,7 +194,6 @@ namespace Loonge.Tests
 	        checkString("\n\t\r\'\"\\\0\a\b\v\f", 7, 24);
 	        
 	        Assert.Throws<SyntaxException>(() => lexer.Read());
-	        Assert.Throws<SyntaxException>(() => lexer.Read());
         }
 
         [Test]
@@ -153,30 +201,9 @@ namespace Loonge.Tests
         {
 	        using var input = new InputStream(NumbersTestFile);
 	        var lexer = new Lexer(input);
-
-	        var checkInt = new Action<int, int, int>((num, line, column) =>
-	        {
-		        var tok = lexer.Read();
-		        Assert.AreEqual(TokenType.Number, tok.Type, "Token Type");
-		        Assert.AreEqual(num, (int) tok.Value, "Token Value");
-		        if (line != -1 && column != -1)
-		        {
-			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-		        }
-	        });
 	        
-	        var checkDouble = new Action<double, int, int>((num, line, column) =>
-	        {
-		        var tok = lexer.Read();
-		        Assert.AreEqual(TokenType.DecimalNumber, tok.Type, "Token Type");
-		        Assert.AreEqual(num, (double) tok.Value, "Token Value");
-		        if (line != -1 && column != -1)
-		        {
-			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-		        }
-	        });
+	        var checkInt = CreateTestAction<int>(lexer, TokenType.Number);
+	        var checkDouble = CreateTestAction<double>(lexer, TokenType.DecimalNumber);
 
 	        checkInt(123123, 1, 7);
 	        checkDouble(123.123, 2, 8);
@@ -195,18 +222,8 @@ namespace Loonge.Tests
         {
 	        using var input = new InputStream(OperatorsTestFile);
 	        var lexer = new Lexer(input);
-
-	        var checkOp = new Action<Operator, int, int>((op, line, column) =>
-	        {
-		        var tok = lexer.Read();
-		        Assert.AreEqual(TokenType.Operator, tok.Type, "Token Type");
-		        Assert.AreEqual(op, (Operator) tok.Value, "Token Value");
-		        if (line != -1 && column != -1)
-		        {
-			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
-		        }
-	        });
+	        
+	        var checkOp = CreateTestAction<Operator>(lexer, TokenType.Operator);
 
 	        checkOp(Operator.Plus, 1, 1);
 	        checkOp(Operator.Minus, 2, 1);
@@ -217,28 +234,63 @@ namespace Loonge.Tests
 	        checkOp(Operator.LogicalOr, 5, 4);
 	        
 	        checkOp(Operator.Lambda, 6, 2);
-	        checkOp(Operator.ModuleAssign, 6, 5);
+	        checkOp(Operator.ModuloAssign, 6, 5);
 	        
 	        checkOp(Operator.BitXorAssign, 7, 2);
 	        checkOp(Operator.BitOrAssign, 7, 5);
         }
 
         [Test]
+        public void WordsTest()
+        {
+	        using var input = new InputStream(WordsTestFile);
+	        var lexer = new Lexer(input);
+
+	        var checkType = CreateTestAction<TypeAlias>(lexer, TokenType.TypeAlias);
+	        var checkKeyword = CreateTestAction<Keyword>(lexer, TokenType.Keyword);
+	        var checkIdent = CreateTestAction<string>(lexer, TokenType.Identifier);
+	        var checkOp = CreateTestAction<Operator>(lexer, TokenType.Operator);
+	        
+	        checkKeyword(Keyword.Fn, -1, -1);
+	        checkKeyword(Keyword.Let, -1, -1);
+	        checkKeyword(Keyword.If, -1, -1);
+	        checkKeyword(Keyword.Else, -1, -1);
+	        checkKeyword(Keyword.Type, -1, -1);
+	        checkKeyword(Keyword.Private, -1, -1);
+	        checkKeyword(Keyword.Public, -1, -1);
+	        checkKeyword(Keyword.Protected, -1, -1);
+
+	        checkType(TypeAlias.I32, -1, -1);
+	        checkType(TypeAlias.I64, -1, -1);
+	        checkType(TypeAlias.F32, -1, -1);
+	        checkType(TypeAlias.F64, -1, -1);
+
+	        checkIdent("test1", -1, -1);
+	        checkIdent("test12", -1, -1);
+	        checkIdent("test13", -1, -1);
+	        checkOp(Operator.MemberAccess, -1, -1);
+	        checkIdent("test14", -1, -1);
+	        checkIdent("test15", -1, -1);
+        }
+
+        [Test]
         public void General()
         {
-	        foreach (var keyword in _availableKeywords)
-		        NextAndCheckKeyword(keyword);
+	        //Assert.Pass();
+	        
+	        //foreach (var keyword in _availableKeywords)
+		    //    NextAndCheckKeyword(keyword);
 
 	        foreach (var typeAlias in _availableTypeAliases)
 		        NextAndCheckTypeAlias(typeAlias);
 
-			CheckDelimiters('.', ',', '[', ']', '(', ')', '{', '}', ';');
+	        CheckDelimiters(',', '[', ']', '(', ')', '{', '}', ';');
 			CheckStrings("string1", "string1.1", "string2", "string2.1", "string2.2", "string3", null, "  ");
 			CheckChars('a', ' ', '\n');
         }
 
 		[Test]
-        public void TestForExceptions()
+        public void ExceptionsTest()
         {
 	        Assert.DoesNotThrow(() => _lexer.Peek(), "Peek() method must not throw an exception");
 	        Assert.DoesNotThrow(() => _lexer.Read(), "Read() method must not throw an exception");
@@ -257,6 +309,21 @@ namespace Loonge.Tests
 			_inputStream.Dispose();
         }
 
+        private Action<T, int, int> CreateTestAction<T>(Lexer lexer, TokenType expectedTokenType)
+        {
+	        return (p1, line, column) =>
+	        {
+		        var tok = lexer.Read();
+		        Assert.AreEqual(expectedTokenType, tok.Type, "Token Type");
+		        Assert.AreEqual(p1, (T) tok.Value, "Token Value");
+		        if (line != -1 && column != -1)
+		        {
+			        Assert.AreEqual(line, lexer.Line, $"Invalid Line (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
+			        Assert.AreEqual(column, lexer.Column, $"Invalid Column (exp: {line}:{column}, got: {lexer.Line}:{lexer.Column})");
+		        }
+	        };
+        }
+
         private void NextAndCheckKeyword(string keyword)
         {
 	        NextAndCheckKeyword(Enum.Parse<Keyword>(keyword, true));
@@ -271,9 +338,9 @@ namespace Loonge.Tests
         private void CheckKeyword(Keyword keyword)
         {
 	        Keyword kw;
-	        Assert.That(_token.Type == TokenType.Keyword, $"Expected Keyword (Token Value: {_token.Value})");
+	        Assert.AreEqual(TokenType.Keyword, _token.Type, $"Expected Keyword (Token Value: {_token.Value})");
 	        Assert.That(Enum.TryParse(_token.Value.ToString(), true, out kw), $"Expected keyword {keyword}, but got {kw}");
-			Assert.That(kw == keyword);
+			Assert.AreEqual(keyword, kw);
         }
 
         private void NextAndCheckTypeAlias(string typeAlias)
@@ -298,12 +365,12 @@ namespace Loonge.Tests
         private void CheckDelimiter(char expected)
         {
 	        T();
-			Assert.That(_token.Type == TokenType.Delimiter, $"Expected Delimiter (Token Value: {_token.Value})");
+			Assert.AreEqual(TokenType.Punctuation, _token.Type, $"Expected Punctuation (Token Value: {_token.Value}) ({_lexer.Line}:{_lexer.Column})");
 			Assert.DoesNotThrow(() =>
 			{
 				var test = (char)_token.Value;
 			});
-			Assert.That((char)_token.Value == expected);
+			Assert.AreEqual(expected, (char)_token.Value);
         }
 
         private void CheckDelimiters(params char[] expected)

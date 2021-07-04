@@ -6,7 +6,7 @@
         /// End Of File (Stream)
         /// </summary>
 		Eof = -1,
-		Delimiter = 0,
+		Punctuation = 0,
 		Keyword = 1,
 		TypeAlias = 2,
 		Operator = 3,
