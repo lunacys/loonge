@@ -34,5 +34,5 @@ let max = (n1: i32, n2: i32) => n1 > n2 ? n1 : n2;
 
 std.println($"Max of 2 and 3 is: {max(2, 3)}");
 
-let usersTable: [string username, string passwordHash];
+let usersTable: [ username: string, passwordHash: string ];
 usersTable.add([ "Test", "abcdefg" ]);
