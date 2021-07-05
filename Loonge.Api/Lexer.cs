@@ -69,13 +69,7 @@ namespace Loonge.Api
 			{ "--", Operator.Decrement },
 		};
 
-		private void ReadNoEof()
-		{
-			if (!_input.IsEndOfStream)
-				_lastChar = _input.Read();
-		}
-
-		public Lexer(InputStream input)
+        public Lexer(InputStream input)
 		{
 			_input = input;
 		}

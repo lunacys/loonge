@@ -43,11 +43,7 @@ namespace Loonge.Api.IO
 				InitializeFromString(filenameOrContent);
 			}
 		}
-
-		public InputStream(Stream stream)
-			: this(new StreamReader(stream))
-		{ }
-
+		
 		public InputStream(StreamReader streamReader)
 		{
 			InitializeFromFile(streamReader);

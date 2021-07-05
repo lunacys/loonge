@@ -2,6 +2,7 @@ using System;
 
 namespace Loonge.Api.Exceptions
 {
+    [Serializable]
     public class SyntaxException : Exception 
     {
         public int Position { get; }

@@ -439,8 +439,9 @@ namespace Loonge.Tests
 
             Assert.Throws<SyntaxException>(() => throw _lexer.GetException("TestException"),
                 "GetException() method must throw exception of type SyntaxException (no inner exception)");
-			Assert.Throws<SyntaxException>(() => throw _lexer.GetException("TestInnerException", new SyntaxException("", 0, 1, 0)),
-				"GetException() method must throw exception of type SyntaxException (with inner exception)");
+            Assert.Throws<SyntaxException>(
+                () => throw _lexer.GetException("TestInnerException", new SyntaxException("", 0, 1, 0)),
+                "GetException() method must throw exception of type SyntaxException (with inner exception)");
             Assert.Throws<SyntaxException>(() => throw _lexer.GetException(null, new SyntaxException("", 0, 1, 0)),
                 "GetException() method must throw exception of type SyntaxException (with inner exception, additionalMessage is null)");
 
@@ -451,7 +452,17 @@ namespace Loonge.Tests
             Assert.Throws<SyntaxException>(() => _lexer.ThrowException(null, new SyntaxException("", 0, 1, 0)),
                 "GetException() method must throw exception of type SyntaxException (with inner exception, additionalMessage is null)");
 
-			Assert.DoesNotThrow(() =>
+            var exc = _lexer.GetException("TestException");
+            var syntExc = exc as SyntaxException;
+            Assert.IsNotNull(syntExc);
+            Assert.AreEqual(1, syntExc.Line, "Line");
+            Assert.AreEqual(9, syntExc.Column, "Column");
+            Assert.AreEqual(9, syntExc.Position, "Position");
+
+            var testExc = new SyntaxException("TestExceptionNoPos");
+			Assert.AreEqual("TestExceptionNoPos", testExc.Message, "Exception Message");
+
+            Assert.DoesNotThrow(() =>
 			{
 				while (_lexer.Read().Type != TokenType.Eof) ;
             });
@@ -492,24 +503,24 @@ namespace Loonge.Tests
 	        };
         }
 
-        private void NextAndCheckKeyword(string keyword)
+        /*private void NextAndCheckKeyword(string keyword)
         {
 	        NextAndCheckKeyword(Enum.Parse<Keyword>(keyword, true));
-        }
+        }*/
 
-        private void NextAndCheckKeyword(Keyword keyword)
+        /*private void NextAndCheckKeyword(Keyword keyword)
         {
 			T();
 			CheckKeyword(keyword);
-        }
+        }*/
 
-        private void CheckKeyword(Keyword keyword)
+        /*private void CheckKeyword(Keyword keyword)
         {
 	        Keyword kw;
 	        Assert.AreEqual(TokenType.Keyword, _token.Type, $"Expected Keyword (Token Value: {_token.Value})");
 	        Assert.That(Enum.TryParse(_token.Value.ToString(), true, out kw), $"Expected keyword {keyword}, but got {kw}");
 			Assert.AreEqual(keyword, kw);
-        }
+        }*/
 
         private void NextAndCheckTypeAlias(string typeAlias)
         {
@@ -578,6 +589,7 @@ namespace Loonge.Tests
             Assert.DoesNotThrow(() =>
 			{
 				var test = (string)_token.Value;
+				Assert.IsNotNull(test);
 			});
 			Assert.AreEqual(expected, (string)_token.Value);
         }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Loonge.Api.IO;
 using NUnit.Framework;
@@ -11,6 +12,49 @@ namespace Loonge.Tests
 		[SetUp]
 		public void SetUp()
 		{ }
+
+		[Test]
+        public void SanityTest()
+        {
+            var input = new InputStream("InputStream_Test1.txt");
+
+            StringReader sr = null;
+			Assert.DoesNotThrow(() => sr = input.ToStringReader());
+
+			Assert.IsNotNull(sr);
+			Assert.DoesNotThrow(() =>
+            {
+                sr.Peek();
+                sr.Read();
+            });
+
+			Assert.DoesNotThrow(() =>
+            {
+                input.Dispose();
+			});
+
+			Assert.DoesNotThrow(() => sr = input.ToStringReader());
+			Assert.Throws<ObjectDisposedException>(() => input.Read());
+
+            input = new InputStream(new StreamReader("InputStream_Test1.txt"));
+            sr = null;
+            Assert.DoesNotThrow(() => sr = input.ToStringReader());
+
+            Assert.IsNotNull(sr);
+            Assert.DoesNotThrow(() =>
+            {
+                sr.Peek();
+                sr.Read();
+            });
+
+            Assert.DoesNotThrow(() =>
+            {
+                input.Dispose();
+            });
+
+            Assert.DoesNotThrow(() => sr = input.ToStringReader());
+            Assert.Throws<ObjectDisposedException>(() => input.Read());
+		}
 
 		[Test]
 		[TestCase("InputStream_Test1.txt")]
@@ -47,9 +91,11 @@ namespace Loonge.Tests
 			Assert.That(input.Column == 0 && input.Line == 1 && input.Position == 0);
 
 			for (int i = 1; i <= 6; i++)
-			{
-				var ch = input.Read();
-				var chAsInt = int.Parse(ch.ToString());
+            {
+                char ch = ' ';
+                int chAsInt = 0;
+				Assert.DoesNotThrow(() => ch = input.Read());
+				Assert.DoesNotThrow(() => chAsInt = int.Parse(ch.ToString()));
 
 				Assert.That(chAsInt == i, $"Error: i = {i}, chAsInt = {chAsInt}, ch = {ch}");
 				Assert.That(input.Line == 1);
@@ -60,9 +106,10 @@ namespace Loonge.Tests
 			Assert.AreEqual(input.Line, 1);
 			Assert.AreEqual(input.Column, 6);
 
-			var newLineChar = input.Read();
+            char newLineChar = ' ';
+            Assert.DoesNotThrow(() => newLineChar = input.Read());
 
-			Assert.That(newLineChar == '\n' || newLineChar == '\r', $"Error: new line expected, but got: {newLineChar}");
+            Assert.That(newLineChar == '\n' || newLineChar == '\r', $"Error: new line expected, but got: {newLineChar}");
 
 			var expectedPosition = 7;
 			
@@ -80,10 +127,11 @@ namespace Loonge.Tests
 			Assert.AreEqual(input.Position, expectedPosition);
 
 			while (!input.IsEndOfStream)
-			{
-				var ch = input.Read();
+            {
+                char ch = ' ';
+				Assert.DoesNotThrow(() => ch = input.Read());
 
-				Assert.That(char.IsDigit(ch) || ch == '\r' || ch == '\n', $"Error: got an invalid char: {ch}. Expected either \\r or \\n or digit");
+                Assert.That(char.IsDigit(ch) || ch == '\r' || ch == '\n', $"Error: got an invalid char: {ch}. Expected either \\r or \\n or digit");
 			}
 			
 			Assert.Throws<EndOfStreamException>(() => input.Read());
