@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Loonge.Api.Exceptions;
 using Loonge.Api.IO;
+using Loonge.Api.TokenData;
 
-namespace Loonge.Api.Lexing
+namespace Loonge.Api
 {
 	public class Lexer : ILexer
 	{

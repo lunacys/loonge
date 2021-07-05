@@ -1,4 +1,4 @@
-﻿namespace Loonge.Api.Lexing
+﻿namespace Loonge.Api.TokenData
 {
 	public enum Keyword
 	{

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Loonge.Api.Lexing
+namespace Loonge.Api.TokenData
 {
 	public class Token : IEquatable<Token>
 	{

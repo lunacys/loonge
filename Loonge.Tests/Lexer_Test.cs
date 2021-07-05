@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using Loonge.Api;
+using Loonge.Api.Exceptions;
 using Loonge.Api.IO;
-using Loonge.Api.Lexing;
+using Loonge.Api.TokenData;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
@@ -9,7 +11,7 @@ namespace Loonge.Tests
 {
     public class Lexer_Test
     {
-	    private Lexer _lexer;
+	    private ILexer _lexer;
 	    private InputStream _inputStream;
 
 	    private Token _token;

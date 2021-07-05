@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Loonge.Api.Lexing
+namespace Loonge.Api.Exceptions
 {
 	[Serializable]
 	public class InvalidTokenException : Exception
