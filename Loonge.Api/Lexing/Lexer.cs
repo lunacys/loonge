@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Loonge.Api.IO;
 
@@ -210,7 +211,7 @@ namespace Loonge.Api.Lexing
 
 				try
 				{
-					parsedD = double.Parse(numStr);
+					parsedD = double.Parse(numStr, CultureInfo.InvariantCulture);
 				}
 				catch (FormatException e)
 				{
@@ -247,7 +248,7 @@ namespace Loonge.Api.Lexing
 
 				try
 				{
-					parsedD2 = double.Parse(numStr2);
+					parsedD2 = double.Parse(numStr2, CultureInfo.InvariantCulture);
 				}
 				catch (FormatException e)
 				{
@@ -261,7 +262,7 @@ namespace Loonge.Api.Lexing
 
 			try
 			{
-				parsed = int.Parse(numStr2);
+				parsed = int.Parse(numStr2, CultureInfo.InvariantCulture);
 			}
 			catch (FormatException e)
 			{
