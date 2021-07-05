@@ -106,7 +106,7 @@ namespace Loonge.Tests
 			var lines = allText.Contains('\r') ? allText.Split("\r\n") : allText.Split('\n');
 			var column = lines.Last().Length;
 
-			return (allText.Length, lines.Length, column);
+			return (allText.Replace("\r", "").Length, lines.Length, column);
 		}
 	}
 }
