@@ -1,0 +1,29 @@
+﻿// Here we're trying to mimic a real-world usage of the language
+
+let std = import std;
+
+export module math {
+	pub struct point {
+		pub x: i32;
+		pub y: i32;
+
+		ctor(x: i32, y: i32) {
+			this.x = x;
+			this.y = y;
+		}
+
+		pub fn add(point other) {
+			this.x += other.x;
+			this.y += other.y;
+		}
+
+		pub fn subtract(point other) {
+			this.x -= other.x;
+			this.y -= other.y;
+		}
+	}
+
+	pub fn createPoint(): point {
+		return point { 1, 2 };
+	}
+}

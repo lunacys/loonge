@@ -1,0 +1,41 @@
+/* Assuming that all of the Stanard Library's methods are always globally available */
+/* e.g. println(), readln(), parsei32(), etc                                        */
+
+pub fn add(x: i32, y: i32) {
+	return x + y;
+}
+
+pub fn mul(x: i32, y: i32) {
+	return x * y;
+}
+
+// Our entry point
+fn main() {
+	let x = 5; // i32
+	let y = 10; // i32
+	// Lambda expression
+	let sqr = (x: i32) => x * x;
+
+	// Printing to the console
+	println($"{x} + {y} = {add(5, 10)}");
+	println($"{x} * {y} = {mul(5, 10)}");
+	println($"{x}^2 = {sqr(x)}");
+
+	// Infinite loop
+	loop {
+		let userInput = readln();
+		if (userInput == null)
+			return;
+
+		// Functions that can produce errors can return an 'err' as a second parameter
+		let num, err = parsei32(userInput);
+		// 'err' is null if no error occured
+		if (err != null) { 
+			errorln("Invalid number: " + userInput);
+			return;
+		}
+
+		println($"{num} squared is {sqr(num)}");
+		// Going back to the loop (line 25)
+	}
+}
