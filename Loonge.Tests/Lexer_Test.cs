@@ -432,10 +432,24 @@ namespace Loonge.Tests
 		[Test]
         public void ExceptionsTest()
         {
-	        Assert.DoesNotThrow(() => _lexer.Peek(), "Peek() method must not throw an exception");
-	        Assert.DoesNotThrow(() => _lexer.Read(), "Read() method must not throw an exception");
-	        Assert.Throws<InvalidTokenException>(() => _lexer.ThrowException(new InvalidTokenException(1, 0)),
-		        "ThrowException() method must throw exception of type InvalidTokenException");
+            Assert.DoesNotThrow(() => _inputStream.Peek(), "InputStream.Peek() method must not throw an exception");
+            Assert.DoesNotThrow(() => _inputStream.Read(), "InputStream.Read() method must not throw an exception");
+			Assert.DoesNotThrow(() => _lexer.Peek(), "Lexer.Peek() method must not throw an exception");
+	        Assert.DoesNotThrow(() => _lexer.Read(), "Lexer.Read() method must not throw an exception");
+
+            Assert.Throws<SyntaxException>(() => throw _lexer.GetException("TestException"),
+                "GetException() method must throw exception of type SyntaxException (no inner exception)");
+			Assert.Throws<SyntaxException>(() => throw _lexer.GetException("TestInnerException", new SyntaxException("", 0, 1, 0)),
+				"GetException() method must throw exception of type SyntaxException (with inner exception)");
+            Assert.Throws<SyntaxException>(() => throw _lexer.GetException(null, new SyntaxException("", 0, 1, 0)),
+                "GetException() method must throw exception of type SyntaxException (with inner exception, additionalMessage is null)");
+
+			Assert.Throws<SyntaxException>(() => _lexer.ThrowException("TestException"),
+                "GetException() method must throw exception of type SyntaxException (no inner exception)");
+            Assert.Throws<SyntaxException>(() => _lexer.ThrowException("TestInnerException", new SyntaxException("", 0, 1, 0)),
+                "GetException() method must throw exception of type SyntaxException (with inner exception)");
+            Assert.Throws<SyntaxException>(() => _lexer.ThrowException(null, new SyntaxException("", 0, 1, 0)),
+                "GetException() method must throw exception of type SyntaxException (with inner exception, additionalMessage is null)");
 
 			Assert.DoesNotThrow(() =>
 			{

@@ -11,6 +11,7 @@ namespace Loonge.Api
 
 		Token Read();
 		Token Peek();
-		void ThrowException(Exception exception);
-	}
+		Exception GetException(string additionalMessage = null, Exception innerException = null);
+        void ThrowException(string additionalMessage = null, Exception innerException = null);
+    }
 }
