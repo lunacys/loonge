@@ -1,0 +1,35 @@
+﻿// Adding new features (modules)
+use std;
+use std::io;
+
+pub fn main() {
+	std::println("Guessing Game");
+	
+	let min = 0;
+	let max = 100;
+
+	// Another way (we're using std already)
+	println($"Try to guess my number ({min}-{max})");
+	let number = std::random.nexti32(min, max);
+
+	loop mainLoop {
+		println("Please input your guess: ");
+
+		let guessStr = io.readln();
+		let guess, err = parsei32(guessStr);
+
+		if (err != null)
+			continue;
+
+		println("You guessed: " + guess);
+
+		match std::comparer.cmpi32(guess) {
+			ordering::less => println("Too Small!"),
+			ordering::greater => println("Too Big!"),
+			ordering::equal => {
+				println("You Win!");
+				break mainLoop;
+			}
+		}
+	}
+}

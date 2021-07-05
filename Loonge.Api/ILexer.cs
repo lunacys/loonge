@@ -9,7 +9,7 @@ namespace Loonge.Api
 		int Line { get; }
 		int Column { get; }
 
-		Token Read();
+        Token Read();
 		Token Peek();
 		Exception GetException(string additionalMessage = null, Exception innerException = null);
         void ThrowException(string additionalMessage = null, Exception innerException = null);

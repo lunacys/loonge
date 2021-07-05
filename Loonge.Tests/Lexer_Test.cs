@@ -403,7 +403,7 @@ namespace Loonge.Tests
         }
 
         [Test]
-        public void General()
+        public void TokenizerTest()
         {
 	        //Assert.Pass();
 	        
