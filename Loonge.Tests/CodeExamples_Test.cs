@@ -29,6 +29,19 @@ namespace Loonge.Tests
         [Test]
         [TestCase("CodeExamples/Level1.ln")]
         [TestCase("CodeExamples/Level2.ln")]
+        public void InputStreamSanityTest(string fileName)
+        {
+            InitForFile(fileName);
+
+            Assert.DoesNotThrow(() =>
+            {
+                while (!_input.IsEndOfStream) { var a = _input.Read(); }
+            });
+        }
+
+        [Test]
+        [TestCase("CodeExamples/Level1.ln")]
+        [TestCase("CodeExamples/Level2.ln")]
         public void LexerTokenSanityTest(string fileName)
         {
             InitForFile(fileName);
@@ -43,7 +56,7 @@ namespace Loonge.Tests
         {
             _input = new InputStream(filename);
             _lexer = new Lexer(_input);
-            _parser = null;
+            _parser = new Parser(_lexer);
         }
     }
 }
